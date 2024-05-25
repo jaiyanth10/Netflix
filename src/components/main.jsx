@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
+import { popular } from "../request";
 export default function Main() {
   const [movies, setMovies] = useState([1, 2]);
   useEffect(() => {
     function getMovieData() {
-      fetch("https://api.themoviedb.org/3/movie/popular", {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNjBkZDUxMWZmMDZkYTZiYmM2OGQwYzNhMWU4MGIxMSIsInN1YiI6IjYxZjIzYmRkZDdjZDA2MDBkOTIwNmUzMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NOIrz1OmCS-fZIYTznSBLmXVwt2KnbiyDUj1eWhi5aU",
-        },
+      popular()
+      .then(data => {
+        // Handle popular movies data
+        setMovies(data?.results);
       })
-        .then((response) => response.json())
-        .then((response) => setMovies(response.results))
-        .catch((err) => alert(err && "cant Fetch Data"));
+      .catch(error => {
+       console.log( error &&"cant fetch data for random movie")
+      });
     }
     getMovieData();
   }, []);
@@ -22,7 +20,7 @@ export default function Main() {
   // function for shortening description and adding ...
   function shorten(str, Req_length) {
     if (str && str.length > Req_length) {
-      return str.slice(0, Req_length - 3) + "......";
+      return str.slice(0, Req_length) + "......";
     } else {
       return str;
     }
